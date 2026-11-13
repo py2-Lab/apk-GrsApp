@@ -46,16 +46,22 @@ export default function Onboarding() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const { width } = useWindowDimensions();
   
-  const handleNext = () => {
-    if (currentIndex < slides.length - 1) {
-      flatListRef.current?.scrollToIndex({
-        index: currentIndex + 1,
-        animated: true
-      });
-    } else {
-      router.replace("/(auth)/login");
-    }
-  };
+  
+const handleNext = () => {
+  if (currentIndex < slides.length - 1) {
+    const nextIndex = currentIndex + 1;
+
+    flatListRef.current?.scrollToOffset({
+      offset: nextIndex * width,
+      animated: true,
+    });
+
+    setCurrentIndex(nextIndex);
+  } else {
+    router.replace("/(auth)/login");
+  }
+};
+
 
   return (
     <View style={styles.root}>
