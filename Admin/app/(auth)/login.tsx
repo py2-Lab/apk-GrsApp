@@ -14,6 +14,8 @@ import {
   Alert,
 } from "react-native";
 
+import { Mail, LockKeyhole, Eye, EyeOff } from "lucide-react-native";
+
 import { styles } from "../../styles/login";
 
 export default function LoginScreen() {
@@ -67,8 +69,6 @@ export default function LoginScreen() {
               resizeMode="contain"
             />
 
-            <Text style={styles.brandName}>GrsApp</Text>
-
             <Text style={styles.headerSubtitle}>
               Pendataan Pekerja di Page Admin
             </Text>
@@ -85,7 +85,9 @@ export default function LoginScreen() {
 
             {/* EMAIL */}
             <View style={styles.inputContainer}>
-              <Text style={styles.inputIcon}>✉</Text>
+              <View style={styles.inputIcon}>
+                <Mail size={19} color="#555555" strokeWidth={1.8} />
+              </View>
 
               <TextInput
                 style={styles.input}
@@ -101,7 +103,9 @@ export default function LoginScreen() {
 
             {/* PASSWORD */}
             <View style={styles.inputContainer}>
-              <Text style={styles.inputIcon}>▣</Text>
+              <View style={styles.inputIcon}>
+                <LockKeyhole size={19} color="#555555" strokeWidth={1.8} />
+              </View>
 
               <TextInput
                 style={styles.input}
@@ -117,7 +121,11 @@ export default function LoginScreen() {
                 onPress={() => setShowPassword(!showPassword)}
                 style={styles.eyeButton}
               >
-                <Text style={styles.eyeIcon}>{showPassword ? "◉" : "◎"}</Text>
+                {showPassword ? (
+                  <Eye size={20} color="#555555" strokeWidth={1.8} />
+                ) : (
+                  <EyeOff size={20} color="#555555" strokeWidth={1.8} />
+                )}
               </Pressable>
             </View>
 
@@ -170,7 +178,7 @@ export default function LoginScreen() {
                 onPress={() => handleSocialLogin("GitHub")}
               >
                 <Image
-                  source={require("../../assets/icons/sample3.png")}
+                  source={require("../../assets/icons/sample1.png")}
                   style={styles.socialIcon}
                   resizeMode="contain"
                 />

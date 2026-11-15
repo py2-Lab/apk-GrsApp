@@ -31,8 +31,8 @@ export const styles = StyleSheet.create({
   },
 
   logo: {
-    width: 62,
-    height: 48,
+    width: 100,
+    height: 78,
   },
 
   brandName: {
@@ -101,8 +101,9 @@ export const styles = StyleSheet.create({
   },
 
   inputIcon: {
-    color: "#555555",
-    fontSize: 17,
+    width: 22,
+    alignItems: "center",
+    justifyContent: "center",
     marginRight: 9,
   },
 
@@ -116,11 +117,6 @@ export const styles = StyleSheet.create({
 
   eyeButton: {
     padding: 5,
-  },
-
-  eyeIcon: {
-    fontSize: 17,
-    color: "#555555",
   },
 
   // FORGOT PASSWORD
