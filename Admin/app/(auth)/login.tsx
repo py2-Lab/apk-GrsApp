@@ -29,11 +29,42 @@ export default function LoginScreen() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   
-  const handleLogin = () => {
-    if (!email.trim() || !password.trim()) {
-      Alert.alert("Perhatian", "Email dan password wajib diisi.");
-      return;
+  
+const handleLogin = async () => {
+  const cleanEmail = email.trim().toLowerCase();
+
+  if (!cleanEmail || !password) {
+    Alert.alert("Perhatian", "Email dan password wajib diisi.");
+    return;
+  }
+
+  try {
+    setLoading(true);
+
+    const result = await authApi.login(cleanEmail, password);
+
+    await SecureStore.setItemAsync("authToken", result.token);
+    await SecureStore.setItemAsync(
+      "authUser",
+      JSON.stringify(result.user),
+    );
+
+    if (result.user.role === "superadmin") {
+      router.replace("/super-admin");
+    } else {
+      router.replace("/(dashboard)");
     }
+  } catch (error) {
+    Alert.alert(
+      "Login gagal",
+      error instanceof Error
+        ? error.message
+        : "Terjadi kesalahan saat login.",
+    );
+  } finally {
+    setLoading(false);
+  }
+
 
     // TODO: Hubungkan dengan API autentikasi Admin.
     Alert.alert("Login Admin", "Form berhasil diisi.");
@@ -155,8 +186,13 @@ export default function LoginScreen() {
                 pressed && styles.buttonPressed,
               ]}
               onPress={handleLogin}
+              disabled={loading}
             >
-              <Text style={styles.loginButtonText}>Login →</Text>
+              {loading ? (
+                <ActivityIndicator color="#FFFFFF" />
+              ) : (
+                <Text style={styles.loginButtonText}>Login →</Text>
+              )}
             </Pressable>
 
             {/* DIVIDER */}

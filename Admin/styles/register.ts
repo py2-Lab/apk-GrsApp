@@ -37,16 +37,16 @@ export const styles = StyleSheet.create({
   },
 
   logo: {
-    width: 76,
-    height: 58,
+    width: 100,
+    height: 78,
   },
 
-  brandName: {
-    fontSize: 17,
-    fontWeight: "800",
-    color: "#087D43",
-    marginTop: -4,
-  },
+  // brandName: {
+  //   fontSize: 17,
+  //   fontWeight: "800",
+  //   color: "#087D43",
+  //   marginTop: -4,
+  // },
 
   headerSubtitle: {
     color: "#FFFFFF",

@@ -136,7 +136,7 @@ export default function RegisterScreen() {
               resizeMode="contain"
             />
 
-            <Text style={styles.brandName}>GrsApp</Text>
+            {/* <Text style={styles.brandName}>GrsApp</Text> */}
 
             <Text style={styles.headerSubtitle}>
               Buat Akun Admin untuk mengelola sistem

@@ -110,7 +110,8 @@ function createToken(admin) {
 // AUTHENTICATION MIDDLEWARE
 // ========================================
 
-function authenticate(req, res, next) {
+
+async function authenticate(req, res, next) {
   const header = req.headers.authorization || "";
 
   const token = header.startsWith("Bearer ")
@@ -124,24 +125,50 @@ function authenticate(req, res, next) {
   }
 
   try {
-    req.auth = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET);
+
+    const admin = await Admin.findById(decoded.sub);
+
+    if (!admin) {
+      return res.status(401).json({
+        message: "Akun sudah tidak tersedia.",
+      });
+    }
+
+    if (admin.status !== "approved") {
+      return res.status(403).json({
+        message: "Akun tidak memiliki akses aktif.",
+      });
+    }
+
+    if (admin.role !== decoded.role) {
+      return res.status(403).json({
+        message: "Hak akses akun tidak valid.",
+      });
+    }
+
+    req.auth = {
+      sub: admin._id.toString(),
+      role: admin.role,
+    };
+
     return next();
-  } catch {
-    return res.status(401).json({
-      message: "Sesi tidak valid atau sudah kedaluwarsa.",
+  } catch (error) {
+    if (error.name === "JsonWebTokenError" ||
+        error.name === "TokenExpiredError") {
+      return res.status(401).json({
+        message: "Sesi tidak valid atau sudah kedaluwarsa.",
+      });
+    }
+
+    console.error("Authentication error:", error);
+
+    return res.status(500).json({
+      message: "Gagal memverifikasi autentikasi.",
     });
   }
 }
 
-function requireSuperAdmin(req, res, next) {
-  if (req.auth?.role !== "superadmin") {
-    return res.status(403).json({
-      message: "Akses khusus Super Admin.",
-    });
-  }
-
-  return next();
-}
 
 // ========================================
 // HEALTH CHECK
@@ -424,6 +451,81 @@ app.patch(
     }
   },
 );
+
+
+// ========================================
+// SUPER ADMIN: SEMUA AKUN ADMIN
+// ========================================
+
+app.get(
+  "/api/superadmin/admins",
+  authenticate,
+  requireSuperAdmin,
+  async (req, res) => {
+    try {
+      const users = await Admin.find({
+        role: "admin",
+      })
+        .select("username email role status createdAt")
+        .sort({ createdAt: -1 });
+
+      return res.json({ users });
+    } catch (error) {
+      console.error("Get Admins error:", error);
+
+      return res.status(500).json({
+        message: "Gagal mengambil daftar akun Admin.",
+      });
+    }
+  },
+);
+
+// ========================================
+// SUPER ADMIN: HAPUS AKUN ADMIN
+// ========================================
+
+app.delete(
+  "/api/superadmin/admins/:id",
+  authenticate,
+  requireSuperAdmin,
+  async (req, res) => {
+    try {
+      const admin = await Admin.findOne({
+        _id: req.params.id,
+        role: "admin",
+      });
+
+      if (!admin) {
+        return res.status(404).json({
+          message: "Akun Admin tidak ditemukan.",
+        });
+      }
+
+      await Admin.deleteOne({
+        _id: admin._id,
+        role: "admin",
+      });
+
+      return res.json({
+        message: "Akun Admin berhasil dihapus.",
+        deletedId: admin._id,
+      });
+    } catch (error) {
+      console.error("Delete Admin error:", error);
+
+      if (error.name === "CastError") {
+        return res.status(400).json({
+          message: "ID akun tidak valid.",
+        });
+      }
+
+      return res.status(500).json({
+        message: "Gagal menghapus akun Admin.",
+      });
+    }
+  },
+);
+
 
 // ========================================
 // CREATE INITIAL SUPER ADMIN

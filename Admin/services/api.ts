@@ -28,6 +28,15 @@ export type AuthResponse = {
   };
 };
 
+export type AdminAccount = {
+  _id: string;
+  username: string;
+  email: string;
+  role: "admin";
+  status: "pending" | "approved" | "rejected";
+  createdAt: string;
+};
+
 function ensureApiUrl() {
   if (!API_URL) {
     throw new Error("Alamat API belum diatur. Periksa EXPO_PUBLIC_API_URL.");
@@ -58,7 +67,6 @@ export const authApi = {
 
     try {
       const response = await api.post("/auth/register", payload);
-
       return response.data;
     } catch (error) {
       throw new Error(getApiError(error));
@@ -72,6 +80,64 @@ export const authApi = {
       const response = await api.post("/auth/login", {
         email,
         password,
+      });
+
+      return response.data;
+    } catch (error) {
+      throw new Error(getApiError(error));
+    }
+  },
+};
+
+export const superAdminApi = {
+  async getAdmins(token: string): Promise<{ users: AdminAccount[] }> {
+    ensureApiUrl();
+
+    try {
+      const response = await api.get("/superadmin/admins", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      return response.data;
+    } catch (error) {
+      throw new Error(getApiError(error));
+    }
+  },
+
+  async updateStatus(
+    id: string,
+    status: "approved" | "rejected",
+    token: string,
+  ) {
+    ensureApiUrl();
+
+    try {
+      const response = await api.patch(
+        `/superadmin/registrations/${id}`,
+        { status },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      return response.data;
+    } catch (error) {
+      throw new Error(getApiError(error));
+    }
+  },
+
+  async deleteAdmin(id: string, token: string) {
+    ensureApiUrl();
+
+    try {
+      const response = await api.delete(`/superadmin/admins/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       return response.data;
