@@ -169,6 +169,19 @@ async function authenticate(req, res, next) {
   }
 }
 
+// ========================================
+// SUPER ADMIN AUTHORIZATION MIDDLEWARE
+// ========================================
+
+function requireSuperAdmin(req, res, next) {
+  if (!req.auth || req.auth.role !== "superadmin") {
+    return res.status(403).json({
+      message: "Akses hanya untuk Super Admin.",
+    });
+  }
+
+  return next();
+}
 
 // ========================================
 // HEALTH CHECK
