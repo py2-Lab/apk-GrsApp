@@ -6,11 +6,12 @@ export const styles = StyleSheet.create({
   },
 
   header: {
-    height: 53,
+    minHeight: 53,
     backgroundColor: "#568995",
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 13,
+    width: "100%",
   },
 
   headerButton: {

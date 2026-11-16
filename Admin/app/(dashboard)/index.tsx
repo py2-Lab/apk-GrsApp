@@ -13,6 +13,7 @@ import {
 import { useRouter, type Href } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { styles } from "../../styles/home";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import {
   Menu,
@@ -170,6 +171,7 @@ const projectProgress = [
 
 export default function HomeAdminScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   const [menuVisible, setMenuVisible] = useState(false);
   const [selectedRecap, setSelectedRecap] = useState(1);
@@ -240,13 +242,21 @@ export default function HomeAdminScreen() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle="light-content" />
 
       {/* ==================================
           HEADER
       ================================== */}
 
-      <View style={styles.header}>
+      <View
+        style={[
+          styles.header,
+          {
+            height: 53 + insets.top,
+            paddingTop: insets.top,
+          },
+        ]}
+      >
         <Pressable
           style={styles.headerButton}
           onPress={() => setMenuVisible(true)}
