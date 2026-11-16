@@ -13,16 +13,22 @@ import {
   Platform,
   Alert,
 } from "react-native";
+import { useRouter } from "expo-router";
 
 import { Mail, LockKeyhole, Eye, EyeOff } from "lucide-react-native";
 
 import { styles } from "../../styles/login";
+import { authApi } from "../../services/api";
+import * as SecureStore from "expo-secure-store";
+import { ActivityIndicator } from "react-native";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  
   const handleLogin = () => {
     if (!email.trim() || !password.trim()) {
       Alert.alert("Perhatian", "Email dan password wajib diisi.");
@@ -209,14 +215,7 @@ export default function LoginScreen() {
             <View style={styles.registerContainer}>
               <Text style={styles.registerText}>Belum Punya Akun? </Text>
 
-              <Pressable
-                onPress={() =>
-                  Alert.alert(
-                    "Register",
-                    "Navigasi ke halaman Register akan dihubungkan.",
-                  )
-                }
-              >
+              <Pressable onPress={() => router.push("/register")}>
                 <Text style={styles.registerLink}>Register →</Text>
               </Pressable>
             </View>
