@@ -198,22 +198,15 @@ app.get("/api/health", (req, res) => {
 // REGISTER
 // ========================================
 
+
 app.post(
   "/api/auth/register",
   authLimiter,
   async (req, res) => {
     try {
-      const username = String(
-        req.body.username || "",
-      ).trim();
-
-      const email = String(
-        req.body.email || "",
-      ).trim().toLowerCase();
-
-      const password = String(
-        req.body.password || "",
-      );
+      const username = String(req.body.username || "").trim();
+      const email = String(req.body.email || "").trim().toLowerCase();
+      const password = String(req.body.password || "");
 
       if (!username || !email || !password) {
         return res.status(400).json({
@@ -254,7 +247,7 @@ app.post(
           { email },
           {
             username: {
-              $regex: `^${username}$`,
+              $regex: `^${username.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`,
               $options: "i",
             },
           },
@@ -267,10 +260,7 @@ app.post(
         });
       }
 
-      const hashedPassword = await bcrypt.hash(
-        password,
-        12,
-      );
+      const hashedPassword = await bcrypt.hash(password, 12);
 
       await Admin.create({
         username,
@@ -281,8 +271,7 @@ app.post(
       });
 
       return res.status(201).json({
-        message:
-          "Pendaftaran berhasil. Akun Anda menunggu persetujuan Super Admin.",
+        message: "Pendaftaran berhasil. Akun Anda menunggu persetujuan Super Admin.",
         status: "pending",
       });
     } catch (error) {
@@ -301,64 +290,70 @@ app.post(
   },
 );
 
+
 // ========================================
 // LOGIN
 // ========================================
+
 
 app.post(
   "/api/auth/login",
   authLimiter,
   async (req, res) => {
     try {
-      const email = String(
-        req.body.email || "",
-      ).trim().toLowerCase();
+      const identifier = String(
+        req.body.identifier || req.body.email || ""
+      ).trim();
 
-      const password = String(
-        req.body.password || "",
-      );
+      const password = String(req.body.password || "");
 
-      if (!email || !password) {
+      if (!identifier || !password) {
         return res.status(400).json({
-          message: "Email dan password wajib diisi.",
+          message: "Email atau username dan password wajib diisi.",
         });
       }
 
+      const escapedIdentifier = identifier.replace(
+        /[.*+?^${}()|[\]\\]/g,
+        "\\$&"
+      );
+
       const admin = await Admin.findOne({
-        email,
+        $or: [
+          { email: identifier.toLowerCase() },
+          {
+            username: {
+              $regex: `^${escapedIdentifier}$`,
+              $options: "i",
+            },
+          },
+        ],
       }).select("+password");
 
       if (
         !admin ||
-        !(await bcrypt.compare(
-          password,
-          admin.password,
-        ))
+        !(await bcrypt.compare(password, admin.password))
       ) {
         return res.status(401).json({
-          message: "Email atau password salah.",
+          message: "Email/username atau password salah.",
         });
       }
 
       if (admin.status === "pending") {
         return res.status(403).json({
-          message:
-            "Akun Anda masih menunggu persetujuan Super Admin.",
+          message: "Akun Anda masih menunggu persetujuan Super Admin.",
         });
       }
 
       if (admin.status === "rejected") {
         return res.status(403).json({
-          message:
-            "Pendaftaran akun Anda ditolak. Hubungi Super Admin.",
+          message: "Pendaftaran akun Anda ditolak. Hubungi Super Admin.",
         });
       }
 
       return res.json({
         message: "Login berhasil.",
-
         token: createToken(admin),
-
         user: {
           id: admin._id,
           username: admin.username,
@@ -376,6 +371,7 @@ app.post(
     }
   },
 );
+
 
 // ========================================
 // SUPER ADMIN: DAFTAR PENDAFTARAN PENDING
@@ -544,50 +540,62 @@ app.delete(
 // CREATE INITIAL SUPER ADMIN
 // ========================================
 
+
 async function seedSuperAdmin() {
+  const username = String(
+    process.env.SUPER_ADMIN_USERNAME || "superadmin"
+  ).trim();
+
   const email = String(
-    process.env.SUPER_ADMIN_EMAIL || "",
+    process.env.SUPER_ADMIN_EMAIL || ""
   ).trim().toLowerCase();
 
   const password = String(
-    process.env.SUPER_ADMIN_PASSWORD || "",
+    process.env.SUPER_ADMIN_PASSWORD || ""
   );
 
-  if (!email || !password) {
+  if (!username || !email || !password) {
     console.warn(
-      "SUPER_ADMIN_EMAIL/PASSWORD belum diatur.",
+      "Kredensial Super Admin belum lengkap di .env."
     );
     return;
   }
 
   if (password.length < 12) {
     throw new Error(
-      "SUPER_ADMIN_PASSWORD wajib minimal 12 karakter.",
+      "SUPER_ADMIN_PASSWORD wajib minimal 12 karakter."
     );
   }
 
-  const existing = await Admin.findOne({ email });
+  const existing = await Admin.findOne({
+    role: "superadmin",
+  });
+
+  const hashedPassword = await bcrypt.hash(password, 12);
 
   if (existing) {
-    if (existing.role !== "superadmin") {
-      throw new Error(
-        "Email Super Admin sudah digunakan akun non-Super Admin.",
-      );
-    }
+    existing.username = username;
+    existing.email = email;
+    existing.password = hashedPassword;
+    existing.status = "approved";
 
+    await existing.save();
+
+    console.log("Kredensial Super Admin berhasil diperbarui.");
     return;
   }
 
   await Admin.create({
-    username: "superadmin",
+    username,
     email,
-    password: await bcrypt.hash(password, 12),
+    password: hashedPassword,
     role: "superadmin",
     status: "approved",
   });
 
   console.log("Akun Super Admin awal berhasil dibuat.");
 }
+
 
 // ========================================
 // START SERVER

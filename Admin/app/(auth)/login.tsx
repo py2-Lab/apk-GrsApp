@@ -30,23 +30,27 @@ export default function LoginScreen() {
   const [loading, setLoading] = useState(false);
   
   
-const handleLogin = async () => {
-  const cleanEmail = email.trim().toLowerCase();
 
-  if (!cleanEmail || !password) {
-    Alert.alert("Perhatian", "Email dan password wajib diisi.");
+const handleLogin = async () => {
+  const identifier = email.trim();
+
+  if (!identifier || !password) {
+    Alert.alert(
+      "Perhatian",
+      "Email atau username dan password wajib diisi."
+    );
     return;
   }
 
   try {
     setLoading(true);
 
-    const result = await authApi.login(cleanEmail, password);
+    const result = await authApi.login(identifier, password);
 
     await SecureStore.setItemAsync("authToken", result.token);
     await SecureStore.setItemAsync(
       "authUser",
-      JSON.stringify(result.user),
+      JSON.stringify(result.user)
     );
 
     if (result.user.role === "superadmin") {
@@ -59,15 +63,16 @@ const handleLogin = async () => {
       "Login gagal",
       error instanceof Error
         ? error.message
-        : "Terjadi kesalahan saat login.",
+        : "Terjadi kesalahan saat login."
     );
   } finally {
     setLoading(false);
   }
 
 
-    // TODO: Hubungkan dengan API autentikasi Admin.
-    Alert.alert("Login Admin", "Form berhasil diisi.");
+
+    // // TODO: Hubungkan dengan API autentikasi Admin.
+    // Alert.alert("Login Admin", "Form berhasil diisi.");
   };
 
   const handleSocialLogin = (provider: string) => {
@@ -128,7 +133,7 @@ const handleLogin = async () => {
 
               <TextInput
                 style={styles.input}
-                placeholder="Email"
+                placeholder="Email atau Username"
                 placeholderTextColor="#777"
                 value={email}
                 onChangeText={setEmail}

@@ -73,12 +73,12 @@ export const authApi = {
     }
   },
 
-  async login(email: string, password: string): Promise<AuthResponse> {
+  async login(identifier: string, password: string): Promise<AuthResponse> {
     ensureApiUrl();
 
     try {
       const response = await api.post("/auth/login", {
-        email,
+        identifier,
         password,
       });
 
