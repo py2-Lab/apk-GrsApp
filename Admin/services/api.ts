@@ -1,6 +1,18 @@
 import axios from "axios";
+import Constants from "expo-constants";
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL;
+const API_PORT = 5000;
+
+// Mengambil IP laptop dari alamat Expo development server
+const EXPO_HOST = Constants.expoConfig?.hostUri;
+const HOST_IP = EXPO_HOST?.split(":")[0];
+
+// Development: gunakan IP laptop secara otomatis.
+// Production: gunakan alamat API dari environment.
+const API_URL =
+  __DEV__ && HOST_IP
+    ? `http://${HOST_IP}:${API_PORT}`
+    : process.env.EXPO_PUBLIC_API_URL;
 
 export const api = axios.create({
   baseURL: API_URL ? `${API_URL.replace(/\/$/, "")}/api` : undefined,
@@ -9,6 +21,41 @@ export const api = axios.create({
     "Content-Type": "application/json",
   },
 });
+
+
+// API CONNECTION DIAGNOSTIC
+api.interceptors.request.use(
+  (config) => {
+    console.log("[GRS API] REQUEST:", {
+      method: config.method?.toUpperCase(),
+      target: `${config.baseURL}${config.url}`,
+    });
+
+    return config;
+  },
+  (error) => {
+    console.error("[GRS API] REQUEST ERROR:", error);
+    return Promise.reject(error);
+  },
+);
+
+api.interceptors.response.use(
+  (response) => {
+    console.log("[GRS API] SUCCESS:", response.status);
+    return response;
+  },
+  (error) => {
+    console.error("[GRS API] FAILED:", {
+      message: error.message,
+      code: error.code,
+      target: `${error.config?.baseURL ?? "NO_BASE_URL"}${error.config?.url ?? ""}`,
+      status: error.response?.status ?? "NO_RESPONSE",
+      response: error.response?.data ?? null,
+    });
+
+    return Promise.reject(error);
+  },
+);
 
 export type RegisterPayload = {
   username: string;
@@ -37,29 +84,56 @@ export type AdminAccount = {
   createdAt: string;
 };
 
+console.log("EXPO API URL:", API_URL);
+console.log("AXIOS BASE URL:", api.defaults.baseURL);
+
 function ensureApiUrl() {
   if (!API_URL) {
     throw new Error("Alamat API belum diatur. Periksa EXPO_PUBLIC_API_URL.");
   }
 }
 
+
 function getApiError(error: unknown): string {
   if (axios.isAxiosError(error)) {
-    if (error.response?.data?.message) {
-      return error.response.data.message;
+    const target = `${error.config?.baseURL ?? API_URL ?? "Tidak diketahui"}${error.config?.url ?? ""}`;
+
+    // Server memberikan respons HTTP
+    if (error.response) {
+      const serverMessage = error.response.data?.message;
+
+      return (
+        serverMessage ||
+        `Server merespons dengan HTTP ${error.response.status}.`
+      );
     }
 
-    if (error.code === "ECONNABORTED") {
-      return "Server terlalu lama merespons.";
+    // Timeout
+    if (error.code === "ECONNABORTED" || error.code === "ETIMEDOUT") {
+      return `Koneksi timeout setelah 15 detik.\nAlamat: ${target}`;
     }
 
-    if (!error.response) {
-      return "Tidak dapat terhubung ke server. Periksa alamat API dan koneksi jaringan.";
+    // Alamat API kosong
+    if (!error.config?.baseURL) {
+      return "Alamat API tidak ditemukan. Periksa EXPO_PUBLIC_API_URL.";
     }
+
+    // Gangguan jaringan / IP / HTTP Android
+    if (error.code === "ERR_NETWORK") {
+      return `Network Error.\nAlamat tujuan: ${target}\nPeriksa IP komputer, koneksi Wi-Fi, dan izin HTTP Android.`;
+    }
+
+    // Error koneksi lainnya
+    return `Koneksi API gagal.\nAlamat: ${target}\nKode: ${error.code ?? "Tidak tersedia"}\nDetail: ${error.message}`;
   }
 
-  return "Terjadi kesalahan yang tidak diketahui.";
+  console.error("[GRS API] UNKNOWN ERROR:", error);
+
+  return error instanceof Error
+    ? error.message
+    : "Terjadi kesalahan yang tidak diketahui.";
 }
+
 
 export const authApi = {
   async register(payload: RegisterPayload): Promise<{ message: string }> {
