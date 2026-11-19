@@ -22,7 +22,7 @@ import {
 } from "lucide-react-native";
 
 import { superAdminApi } from "../../../services/api";
-import { styles } from "./styles";
+import { styles } from "../../../styles/styles";
 
 type AdminAccount = {
   _id: string;
