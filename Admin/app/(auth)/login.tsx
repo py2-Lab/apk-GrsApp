@@ -54,7 +54,7 @@ const handleLogin = async () => {
     );
 
     if (result.user.role === "superadmin") {
-      router.replace("/super-admin");
+      router.replace("/super-admin/super-admin");
     } else {
       router.replace("/(dashboard)/home");
     }

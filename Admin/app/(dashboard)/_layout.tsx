@@ -5,7 +5,7 @@ export default function DashboardLayout() {
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="home" />
-      <Stack.Screen name="super-admin" />
+      <Stack.Screen name="super-admin/super-admin" />
     </Stack>
   );
 }
