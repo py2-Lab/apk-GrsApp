@@ -220,3 +220,95 @@ export const superAdminApi = {
     }
   },
 };
+
+export type AdminProfile = {
+  username: string;
+  email: string;
+  fullName: string;
+  location: string;
+  education: string;
+  monitoring: string;
+  dailyFeedback: string;
+  crudCount: string;
+};
+
+export type TransactionItem = {
+  _id: string;
+  reference: string;
+  userName: string;
+  userEmail: string;
+  paymentMethod: string;
+  amount: number;
+  status: "paid" | "pending" | "failed" | "refunded";
+  transactionDate: string;
+};
+
+export const adminApi = {
+  async getProfile(token: string) {
+    ensureApiUrl();
+
+    try {
+      const response = await api.get("/admin/profile", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      return response.data as { profile: AdminProfile };
+    } catch (error) {
+      throw new Error(getApiError(error));
+    }
+  },
+
+  async updateProfile(payload: Partial<AdminProfile>, token: string) {
+    ensureApiUrl();
+
+    try {
+      const response = await api.patch("/admin/profile", payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      return response.data as { profile: AdminProfile };
+    } catch (error) {
+      throw new Error(getApiError(error));
+    }
+  },
+
+  async getTransactions(
+    params: {
+      period: "7d" | "30d" | "all";
+      search: string;
+      page: number;
+      limit: number;
+    },
+    token: string,
+  ) {
+    ensureApiUrl();
+
+    try {
+      const response = await api.get("/admin/transactions", {
+        params,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      return response.data as {
+        transactions: TransactionItem[];
+        total: number;
+        page: number;
+        totalPages: number;
+        summary: {
+          totalTransactions: number;
+          totalAmount: number;
+          previousAmount: number;
+          growth: number;
+        };
+      };
+    } catch (error) {
+      throw new Error(getApiError(error));
+    }
+  },
+};

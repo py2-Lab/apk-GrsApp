@@ -1,0 +1,323 @@
+import { StyleSheet } from "react-native";
+
+export const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#EEEEEE",
+  },
+  header: {
+    minHeight: 68,
+    backgroundColor: "#568995",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 13,
+    gap: 8,
+  },
+  backButton: {
+    width: 35,
+    height: 40,
+    justifyContent: "center",
+  },
+  headerTitle: {
+    fontSize: 16,
+    color: "#FFFFFF",
+    fontWeight: "800",
+  },
+  headerSubtitle: {
+    fontSize: 9,
+    color: "#E2F0F1",
+    marginTop: 3,
+  },
+  refreshButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  content: {
+    padding: 14,
+    paddingBottom: 30,
+  },
+  summaryCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 13,
+    padding: 15,
+    marginBottom: 10,
+  },
+  summaryIcon: {
+    width: 38,
+    height: 38,
+    backgroundColor: "#E8F3F4",
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 10,
+  },
+  summaryLabel: {
+    color: "#777777",
+    fontSize: 10,
+  },
+  summaryValue: {
+    fontSize: 20,
+    fontWeight: "800",
+    color: "#55A779",
+    marginTop: 5,
+  },
+  summaryDescription: {
+    fontSize: 9,
+    color: "#999999",
+    marginTop: 4,
+  },
+  statsRow: {
+    flexDirection: "row",
+    gap: 9,
+    marginBottom: 22,
+  },
+  statCard: {
+    flex: 1,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
+    padding: 11,
+  },
+  statHeading: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+  },
+  statLabel: {
+    fontSize: 9,
+    color: "#888888",
+    flexShrink: 1,
+  },
+  statValue: {
+    color: "#568995",
+    fontSize: 17,
+    fontWeight: "800",
+    marginTop: 9,
+  },
+  statDescription: {
+    fontSize: 8,
+    color: "#AAAAAA",
+    marginTop: 4,
+  },
+  filterHeading: {
+    marginBottom: 12,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: "800",
+    color: "#568995",
+  },
+  sectionDescription: {
+    fontSize: 9,
+    color: "#888888",
+    marginTop: 4,
+  },
+  periodContainer: {
+    flexDirection: "row",
+    gap: 6,
+    marginBottom: 12,
+  },
+  periodButton: {
+    flex: 1,
+    minHeight: 36,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 7,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 4,
+  },
+  periodActive: {
+    backgroundColor: "#568995",
+  },
+  periodText: {
+    fontSize: 9,
+    color: "#568995",
+    fontWeight: "600",
+  },
+  periodTextActive: {
+    color: "#FFFFFF",
+  },
+  searchContainer: {
+    minHeight: 43,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 9,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 11,
+    gap: 8,
+    marginBottom: 10,
+  },
+  searchInput: {
+    flex: 1,
+    color: "#444444",
+    fontSize: 10,
+    paddingVertical: 9,
+  },
+  searchAction: {
+    color: "#568995",
+    fontSize: 10,
+    fontWeight: "800",
+  },
+  exportButton: {
+    alignSelf: "flex-end",
+    backgroundColor: "#55B3AD",
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 7,
+    marginBottom: 12,
+  },
+  exportText: {
+    color: "#FFFFFF",
+    fontSize: 10,
+    fontWeight: "700",
+  },
+  tableCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 11,
+    overflow: "hidden",
+  },
+  tableHeader: {
+    minHeight: 39,
+    backgroundColor: "#568995",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 7,
+    gap: 4,
+  },
+  tableHeading: {
+    fontSize: 8,
+    color: "#FFFFFF",
+    fontWeight: "700",
+  },
+  transactionRow: {
+    minHeight: 66,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 7,
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: "#EEEEEE",
+    gap: 4,
+  },
+  dateColumn: {
+    flex: 1.1,
+  },
+  dateText: {
+    fontSize: 8,
+    color: "#555555",
+  },
+  referenceText: {
+    fontSize: 7,
+    color: "#AAAAAA",
+    marginTop: 4,
+  },
+  methodColumn: {
+    flex: 1.3,
+  },
+  methodText: {
+    fontSize: 8,
+    color: "#555555",
+    fontWeight: "600",
+  },
+  userText: {
+    fontSize: 7,
+    color: "#999999",
+    marginTop: 4,
+  },
+  amountColumn: {
+    flex: 1.2,
+  },
+  amountText: {
+    fontSize: 8,
+    color: "#555555",
+    fontWeight: "700",
+    marginBottom: 5,
+  },
+  statusBadge: {
+    alignSelf: "flex-start",
+    borderRadius: 5,
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+  },
+  statusPaid: {
+    backgroundColor: "#E1F4E8",
+  },
+  statusPending: {
+    backgroundColor: "#FFF2D5",
+  },
+  statusFailed: {
+    backgroundColor: "#FBE3E3",
+  },
+  statusRefunded: {
+    backgroundColor: "#E6EEF9",
+  },
+  statusText: {
+    fontSize: 7,
+    fontWeight: "700",
+  },
+  detailButton: {
+    width: 48,
+    paddingVertical: 7,
+    backgroundColor: "#55AD79",
+    borderRadius: 6,
+    alignItems: "center",
+  },
+  detailText: {
+    color: "#FFFFFF",
+    fontSize: 8,
+    fontWeight: "700",
+  },
+  emptyState: {
+    minHeight: 180,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 20,
+  },
+  emptyTitle: {
+    color: "#568995",
+    fontSize: 12,
+    fontWeight: "700",
+    marginTop: 10,
+  },
+  emptyText: {
+    color: "#999999",
+    fontSize: 10,
+    textAlign: "center",
+    marginTop: 7,
+  },
+  pagination: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 18,
+    marginTop: 16,
+  },
+  pageButton: {
+    width: 32,
+    height: 32,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 7,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  pageDisabled: {
+    opacity: 0.35,
+  },
+  pageText: {
+    fontSize: 10,
+    color: "#568995",
+    fontWeight: "600",
+  },
+  footer: {
+    textAlign: "center",
+    fontSize: 9,
+    color: "#AAAAAA",
+    marginTop: 25,
+  },
+});
