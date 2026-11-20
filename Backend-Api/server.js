@@ -2,8 +2,8 @@
 require("dotenv").config();
 
 const app = require("./app");
-const connectDB = require("./config/db");
-const seedSuperAdmin = require("./services/superAdminSeeder");
+const connectDB = require("./src/config/db");
+const seedSuperAdmin = require("./src/services/superAdminSeeder");
 
 const PORT = process.env.PORT || 5000;
 
