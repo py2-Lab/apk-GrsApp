@@ -29,6 +29,7 @@ import {
 
 import { adminApi } from "../../services/api";
 import { styles } from "../../styles/profile";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type ProfileData = {
   username: string;
@@ -54,6 +55,7 @@ const initialProfile: ProfileData = {
 
 export default function ProfileAdminScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   const [profile, setProfile] = useState(initialProfile);
   const [editing, setEditing] = useState(false);
@@ -191,11 +193,16 @@ export default function ProfileAdminScreen() {
 
       {/* HEADER */}
 
-      <View style={styles.header}>
-        <Pressable
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
+      <View
+        style={[
+          styles.header,
+          {
+            height: 53 + insets.top,
+            paddingTop: insets.top,
+          },
+        ]}
+      >
+        <Pressable style={styles.backButton} onPress={() => router.back()}>
           <ChevronLeft size={24} color="#FFFFFF" />
         </Pressable>
 
@@ -250,9 +257,7 @@ export default function ProfileAdminScreen() {
               onPress={() => setEditing(!editing)}
             >
               <Pencil size={13} color="#FFFFFF" />
-              <Text style={styles.editText}>
-                {editing ? "Batal" : "Edit"}
-              </Text>
+              <Text style={styles.editText}>{editing ? "Batal" : "Edit"}</Text>
             </Pressable>
           </View>
 
@@ -309,7 +314,7 @@ export default function ProfileAdminScreen() {
           onPress={() =>
             Alert.alert(
               "Pengaturan Lanjutan",
-              "Pengaturan keamanan, preferensi akun, dan informasi sistem akan dikembangkan pada tahap berikutnya."
+              "Pengaturan keamanan, preferensi akun, dan informasi sistem akan dikembangkan pada tahap berikutnya.",
             )
           }
         >
@@ -317,9 +322,7 @@ export default function ProfileAdminScreen() {
           <Text style={styles.settingsText}>Pengaturan Lanjutan</Text>
         </Pressable>
 
-        <Text style={styles.footer}>
-          GrsApp Admin Management System
-        </Text>
+        <Text style={styles.footer}>GrsApp Admin Management System</Text>
       </ScrollView>
     </View>
   );

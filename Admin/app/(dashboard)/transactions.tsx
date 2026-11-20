@@ -30,6 +30,7 @@ import {
 
 import { adminApi } from "../../services/api";
 import { styles } from "../../styles/transaction";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type Transaction = {
   _id: string;
@@ -74,6 +75,7 @@ const statusLabel = {
 
 export default function TransactionsScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [summary, setSummary] = useState<Summary>({
@@ -266,7 +268,15 @@ export default function TransactionsScreen() {
 
       {/* HEADER */}
 
-      <View style={styles.header}>
+      <View
+        style={[
+          styles.header,
+          {
+            height: 53 + insets.top,
+            paddingTop: insets.top,
+          },
+        ]}
+      >
         <Pressable style={styles.backButton} onPress={() => router.back()}>
           <ChevronLeft color="#FFFFFF" size={23} />
         </Pressable>
